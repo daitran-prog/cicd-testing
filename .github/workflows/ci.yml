@@ -28,6 +28,8 @@ jobs:
         run: |
           mkdir -p src/firebase
           echo "$GOOGLE_APPLICATION_CREDENTIALS_BASE64" | base64 -d > src/firebase/serviceAccountKey.json
+          echo "Preview of decoded key:"
+          head -5 src/firebase/serviceAccountKey.json
 
       # 4. Set GOOGLE_APPLICATION_CREDENTIALS env
       - name: Set GOOGLE_APPLICATION_CREDENTIALS env
