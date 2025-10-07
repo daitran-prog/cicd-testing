@@ -8,8 +8,6 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    env:
-      GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
 
     steps:
       # 1. Checkout code
@@ -21,19 +19,27 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18           # Adjust if needed
-          cache: 'npm'               # Speed up builds by caching node_modules
+          cache: 'npm'
 
-      # 4. Install dependencies
+      # 3. Decode service account key
+      - name: Decode service account key
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+        run: |
+          mkdir -p src/firebase
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_BASE64" | base64 -d > src/firebase/serviceAccountKey.json
+
+      # 4. Set GOOGLE_APPLICATION_CREDENTIALS env
+      - name: Set GOOGLE_APPLICATION_CREDENTIALS env
+        run: echo "GOOGLE_APPLICATION_CREDENTIALS=src/firebase/serviceAccountKey.json" >> $GITHUB_ENV
+
+      # 5. Install dependencies
       - name: Install dependencies
         run: npm ci
 
-      # 5. Build the project
+      # 6. Build the project
       - name: Build project
         run: npm run build
-
-      # 6. (Optional) Run tests
-      # - name: Run tests
-      #   run: npm test
 
       # 7. Deploy to Vercel
       - name: Deploy to Vercel
