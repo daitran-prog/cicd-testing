@@ -21,7 +21,7 @@ jobs:
         run: npm ci 
 
       - name: Decode service account key
-        run: echo "$GOOGLE_APPLICATION_CREDENTIALS_BASE64" | base64 -d > ./src/firebase/serviceAccountKey.json
+        run: echo "$GOOGLE_APPLICATION_CREDENTIALS_BASE64" | base64 -d > src/firebase/serviceAccountKey.json
 
       - name: build
         run: npm run build
