@@ -8,6 +8,8 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    env:
+      GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
 
     steps:
       # 1. Checkout code
@@ -20,13 +22,6 @@ jobs:
         with:
           node-version: 18           # Adjust if needed
           cache: 'npm'               # Speed up builds by caching node_modules
-
-      # 3. Decode Base64 service account into src/firebase/serviceAccountKey.json
-      - name: Decode service account key
-        run: |
-          mkdir -p src/firebase
-          echo "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}" | base64 --decode > src/firebase/serviceAccountKey.json
-          echo "Decoded service account key to src/firebase/serviceAccountKey.json"
 
       # 4. Install dependencies
       - name: Install dependencies
