@@ -1,10 +1,10 @@
 'use client'
-import React from 'react';
+import React, { FC } from 'react';
 import { useAuthStore } from '../components/auth';
 
 type Props = {};
 
-const Profile: Props = () => {
+const Profile: FC<Props> = () => {
   const { user = {} }: any = useAuthStore()
   const provider = user?.providerData?.[0] || {};
 
