@@ -3,7 +3,7 @@ name: CI/CD for Next.js with Vercel
 on:
   push:
     branches:
-      - main    # Trigger workflow on pushes to main branch
+      - main
 
 jobs:
   build-and-deploy:
@@ -18,16 +18,25 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 22           # Adjust if needed
+          node-version: 22
           cache: 'npm'
 
+      # 3. Decode Firebase credentials
+      - name: Prepare Firebase credentials
+        run: |
+          echo "${GOOGLE_APPLICATION_CREDENTIALS_BASE64}" | base64 --decode > $HOME/firebase-key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/firebase-key.json" >> $GITHUB_ENV
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+
+      # 4. Debug env vars (optional)
       - name: Debug env vars
         run: |
-          echo "API_KEY is ${NEXT_PUBLIC_FIREBASE_API_KEY}"
-          echo "Credentials (masked) is ${GOOGLE_APPLICATION_CREDENTIALS_BASE64}"
+          echo "API_KEY is $NEXT_PUBLIC_FIREBASE_API_KEY"
+          echo "Credential file path is $GOOGLE_APPLICATION_CREDENTIALS"
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       # 5. Install dependencies
       - name: Install dependencies
@@ -44,4 +53,4 @@ jobs:
           NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID }}
           NEXT_PUBLIC_FIREBASE_APP_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_APP_ID }}
           NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID: ${{ vars.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID }}
-          GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
