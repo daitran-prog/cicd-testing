@@ -24,8 +24,8 @@ jobs:
       # 3. Decode Firebase credentials
       - name: Prepare Firebase credentials
         run: |
-          echo "${GOOGLE_APPLICATION_CREDENTIALS_BASE64}" | base64 --decode > src/firebase/serviceAccountKey.json
-          echo "GOOGLE_APPLICATION_CREDENTIALS=src/firebase/serviceAccountKey.json" >> $GITHUB_ENV
+          echo "${GOOGLE_APPLICATION_CREDENTIALS_BASE64}" | base64 --decode > $HOME/serviceAccountkey.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=$HOME/serviceAccountkey.json" >> $GITHUB_ENV
         env:
           GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
 
@@ -36,7 +36,7 @@ jobs:
           echo "Credential file path is $GOOGLE_APPLICATION_CREDENTIALS"
         env:
           NEXT_PUBLIC_FIREBASE_API_KEY: ${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}
-          GOOGLE_APPLICATION_CREDENTIALS: src/firebase/serviceAccountKey.json
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ env.GOOGLE_APPLICATION_CREDENTIALS }}
 
       # 5. Install dependencies
       - name: Install dependencies
