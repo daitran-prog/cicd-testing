@@ -4,24 +4,19 @@ import { readFileSync } from 'fs';
 let app: admin.app.App
 
 if (!admin.apps.length) {
+    const path = process.env.GOOGLE_APPLICATION_CREDENTIALS;
     let serviceAccount;
 
-    if (process.env.GOOGLE_APPLICATION_CREDENTIALS) {
-        // read from file
-        const raw = readFileSync(process.env.GOOGLE_APPLICATION_CREDENTIALS, "utf-8");
-        serviceAccount = JSON.parse(raw);
-    } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64) {
-        // fallback: decode from env var
-        const credentialsJsonEncoded =
-            process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
-        const credentialsJson = credentialsJsonEncoded
-            ? Buffer.from(credentialsJsonEncoded, "base64").toString("utf-8")
+    if (!path) {
+        const encoded = process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
+        const json = encoded
+            ? Buffer.from(encoded, "base64").toString("utf-8")
             : "{}";
-        serviceAccount = JSON.parse(credentialsJson) as ServiceAccount;
+        serviceAccount = JSON.parse(json);
     } else {
-        throw new Error("Firebase credentials not found");
+        const json = readFileSync(path, "utf-8");
+        serviceAccount = JSON.parse(json);
     }
-
     app = admin.initializeApp({
         credential: admin.credential.cert(serviceAccount as admin.ServiceAccount)
     })
