@@ -18,7 +18,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: 18           # Adjust if needed
+          node-version: 22           # Adjust if needed
           cache: 'npm'
 
       - name: Debug env vars
