@@ -21,6 +21,14 @@ jobs:
           node-version: 18           # Adjust if needed
           cache: 'npm'
 
+      - name: Debug env vars
+        run: |
+          echo "API_KEY is ${NEXT_PUBLIC_FIREBASE_API_KEY}"
+          echo "Credentials (masked) is ${GOOGLE_APPLICATION_CREDENTIALS_BASE64}"
+        env:
+          NEXT_PUBLIC_FIREBASE_API_KEY: ${{ vars.NEXT_PUBLIC_FIREBASE_API_KEY }}
+          GOOGLE_APPLICATION_CREDENTIALS_BASE64: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_BASE64 }}
+
       # 5. Install dependencies
       - name: Install dependencies
         run: npm ci
