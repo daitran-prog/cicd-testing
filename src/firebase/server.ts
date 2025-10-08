@@ -12,8 +12,12 @@ if (!admin.apps.length) {
         serviceAccount = JSON.parse(raw);
     } else if (process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64) {
         // fallback: decode from env var
-        const decoded = Buffer.from(process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64, "base64").toString("utf-8");
-        serviceAccount = JSON.parse(decoded);
+        const credentialsJsonEncoded =
+            process.env.GOOGLE_APPLICATION_CREDENTIALS_BASE64;
+        const credentialsJson = credentialsJsonEncoded
+            ? Buffer.from(credentialsJsonEncoded, "base64").toString("utf-8")
+            : "{}";
+        serviceAccount = JSON.parse(credentialsJson) as ServiceAccount;
     } else {
         throw new Error("Firebase credentials not found");
     }
